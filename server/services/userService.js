@@ -14,6 +14,7 @@ exports.createUser = async (serviceData) => {
     const newUser = await User.create({
       email: serviceData.email,
       password: hashPassword,
+      userName: serviceData.userName,
       firstName: serviceData.firstName,
       lastName: serviceData.lastName,
     });
@@ -36,7 +37,6 @@ exports.getUserProfile = async (serviceData) => {
     if (!user) {
       throw new Error("User not found!");
     }
-
     return user;
   } catch (error) {
     console.error("Error in userService.js", error);
@@ -79,22 +79,22 @@ exports.updateUserProfile = async (serviceData) => {
       .trim();
     const decodedJwtToken = jwt.decode(jwtToken);
 
-    const user = await User.update(
-      {
-        firstName: serviceData.body.firstName,
-        lastName: serviceData.body.lastName,
-      },
-      {
-        where: { id: decodedJwtToken.id },
-        returning: true,
-      }
-    );
+    const updatedUser = {
+      userName: serviceData.body.userName,
+      firstName: serviceData.body.firstName,
+      lastName: serviceData.body.lastName,
+    };
+
+    const user = await User.update(updatedUser, {
+      where: { id: decodedJwtToken.id },
+      returning: true,
+    });
 
     if (!user) {
       throw new Error("User not found!");
     }
 
-    return user[1][0]; // Sequelize retourne un tableau [affectedCount, affectedRows]
+    return updatedUser; // Sequelize retourne un tableau [affectedCount, affectedRows]
   } catch (error) {
     console.error("Error in userService.js", error);
     throw error;

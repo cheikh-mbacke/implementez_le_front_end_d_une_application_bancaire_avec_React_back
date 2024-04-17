@@ -4,16 +4,18 @@ const User = require("./models/userModel");
 
 async function seedUsers() {
   try {
-    await User.sync({ force: false }); // Utilisez force: true avec prudence
+    await User.sync({ force: true }); // Utilisez force: true avec prudence
 
     const usersData = [
       {
+        userName: "Tony",
         firstName: "Tony",
         lastName: "Stark",
         email: "tony@stark.com",
         password: "password123",
       },
       {
+        userName: "Steve",
         firstName: "Steve",
         lastName: "Rogers",
         email: "steve@rogers.com",
