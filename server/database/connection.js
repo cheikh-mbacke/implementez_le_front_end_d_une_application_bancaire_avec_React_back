@@ -1,12 +1,19 @@
-const mongoose = require('mongoose');
-const databaseUrl = process.env.DATABASE_URL || 'mongodb://localhost/argentBankDB';
+const { Sequelize } = require("sequelize");
 
-module.exports = async () => {
+const sequelize = new Sequelize({
+  dialect: "sqlite",
+  storage: "./database.sqlite",
+});
+
+async function dbConnection() {
   try {
-    await mongoose.connect(databaseUrl, { useNewUrlParser: true });
-    console.log('Database successfully connected');
+    await sequelize.authenticate();
+    console.log("Connection has been established successfully.");
+    // Synchronisez tous vos modèles ici si nécessaire
+    await sequelize.sync(); // À décommenter si vous voulez que Sequelize gère la création de la structure de la BDD
   } catch (error) {
-    console.error(`Database Connectivity Error: ${error}`);
-    throw new Error(error);
+    console.error("Unable to connect to the database:", error);
   }
-};
+}
+
+module.exports = dbConnection;
